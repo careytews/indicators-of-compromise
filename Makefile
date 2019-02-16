@@ -1,21 +1,56 @@
-all rebuild init upload godeps:
-	cd src/ioc && make $@
+
+all: ioc.json
+
+ioc.json: ioc-sources output/tt.json output/shalla.json output/tors.json merge-ioc
+	./merge-ioc ioc-sources/trust-networks/trust-networks.json \
+	output/tt.json output/shalla-anonvpn.json output/shalla-dynamic.json \
+	output/shalla-hacking.json output/shalla-redirector.json output/shalla-spyware.json \
+	output/shalla-warez.json output/tors.json > output/ioc.json
+	cp ./output/ioc.json .
+
+target-source: target-source.go
+	go build target-source.go common.go types.go
+
+output/tt.json: target-source
+	./target-source
+
+merge-ioc: merge-ioc.go
+	go build merge-ioc.go types.go
+
+tor-source: tor-source.go
+	go build tor-source.go common.go types.go
+
+output/tors.json: tor-source
+	./tor-source
+
+shalla-source: ioc-shallalist shalla-source.go
+	go build shalla-source.go common.go types.go
+
+output/shalla.json: shalla-source
+	./shalla-source
+	touch output/shalla.json
+
+init: 
+	git clone git@github.com:botherder/targetedthreats.git
+	git clone git@github.com:tnw-open-source/ioc-sources.git
+	git clone git@github.com:tnw-open-source/ioc-shallalist.git
+	mkdir output
+	mkdir ioc-sources/tor
+	wget https://www.dan.me.uk/tornodes -O ioc-sources/tor/tors.html
 
 clean:
-	rm -rf bin && \
-	rm -rf pkg && \
-	rm -rf src/github.com && \
-	rm -rf src/ioc/vendor && \
-	rm -f src/ioc/Gopkg.lock \
-	rm -f src/ioc/target-source && \
-	rm -f src/ioc/shalla-source && \
-	rm -f src/ioc/tor-source && \
-	rm -f src/ioc/merge-ioc && \
-	rm -f src/ioc/translate && \
-	rm -f src/ioc/debug && \
-	rm -rf src/ioc/ioc-sources && \
-	rm -rf src/ioc/output && \
-	rm -rf src/ioc/targetedthreats && \
-	rm -rf src/ioc/ioc-shallalist && \
-	rm -f src/ioc/ioc.json
+	rm -f target-source && \
+	rm -f shalla-source && \
+	rm -f tor-source && \
+	rm -f merge-ioc && \
+	rm -f translate && \
+	rm -f debug && \
+	rm -f ioc.json
 	
+clean-dirs: 
+	rm -rf ioc-sources && \
+	rm -rf output && \
+	rm -rf targetedthreats && \
+	rm -rf ioc-shallalist
+
+clean-all: clean clean-dirs

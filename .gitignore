@@ -1,1 +1,13 @@
 .DS_Store
+
+ioc-shallalist/
+ioc-sources/
+output/
+targetedthreats/
+
+ioc.json
+
+merge-ioc
+shalla-source
+target-source
+tor-source
