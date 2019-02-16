@@ -10,8 +10,8 @@ import (
 	"regexp"
 
 	"github.com/google/uuid"
-	dt "github.com/trustnetworks/analytics-common/datatypes"
-	ind "github.com/trustnetworks/indicators"
+	dt "github.com/tnw-open-source/analytics-common/datatypes"
+	ind "github.com/tnw-open-source/indicators"
 )
 
 const name = "TargetedThreats"

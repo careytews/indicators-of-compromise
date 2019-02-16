@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	ind "github.com/trustnetworks/indicators"
+	ind "github.com/tnw-open-source/indicators"
 )
 
 func main() {

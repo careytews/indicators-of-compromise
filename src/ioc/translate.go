@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	flags "github.com/jessevdk/go-flags"
-	dt "github.com/trustnetworks/analytics-common/datatypes"
-	ind "github.com/trustnetworks/indicators"
+	dt "github.com/tnw-open-source/analytics-common/datatypes"
+	ind "github.com/tnw-open-source/indicators"
 )
 
 var options struct {

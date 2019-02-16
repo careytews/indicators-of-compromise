@@ -10,7 +10,7 @@ import (
 	"regexp"
 	"time"
 
-	ind "github.com/trustnetworks/indicators"
+	ind "github.com/tnw-open-source/indicators"
 )
 
 // Regular expressions to use when cleaning the files
