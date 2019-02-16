@@ -41,16 +41,16 @@ output/shalla.json: shalla-source
 	./shalla-source
 	touch output/shalla.json
 
-bin/dep:
-	GOPATH=${TOPDIR} go get -u github.com/golang/dep/cmd/dep
+# bin/dep:
+# 	GOPATH=${TOPDIR} go get -u github.com/golang/dep/cmd/dep
 
-godeps: bin/dep
-	GOPATH=${TOPDIR} ${TOPDIR}/bin/dep ensure -v
+# godeps: bin/dep
+# 	GOPATH=${TOPDIR} ${TOPDIR}/bin/dep ensure -v
 
-init: godeps
+init: 
 	git clone git@github.com:botherder/targetedthreats.git
-	git clone git@github.com:trustnetworks/ioc-sources.git
-	git clone git@github.com:trustnetworks/ioc-shallalist.git
+	git clone git@github.com:tnw-open-source/ioc-sources.git
+	git clone git@github.com:tnw-open-source/ioc-shallalist.git
 	mkdir output
 
 # rebuild: should rebuild the whole thing

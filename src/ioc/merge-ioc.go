@@ -5,23 +5,21 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-
-	ind "github.com/tnw-open-source/indicators"
 )
 
 func main() {
 
-	inds := ind.IndicatorDefinitions{
+	inds := IndicatorDefinitions{
 		Description: "Trust Networks Indicators",
 		Version:     "3"}
 
-	inds.Definitions = make([]*ind.IndicatorNode, 0)
+	inds.Definitions = make([]*IndicatorNode, 0)
 
 	for _, f := range os.Args[1:] {
 
 		fmt.Fprintf(os.Stderr, "%s...\n", f)
 
-		var part ind.IndicatorDefinitions
+		var part IndicatorDefinitions
 
 		raw, err := ioutil.ReadFile(f)
 		if err != nil {

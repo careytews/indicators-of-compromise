@@ -9,8 +9,6 @@ import (
 	"os"
 	"regexp"
 	"time"
-
-	ind "github.com/tnw-open-source/indicators"
 )
 
 // Regular expressions to use when cleaning the files
@@ -89,7 +87,7 @@ func fetchInit(filename string, url string, minutes float64) error {
 	return nil
 }
 
-func save(definitions *ind.IndicatorDefinitions, outfile string) error {
+func save(definitions *IndicatorDefinitions, outfile string) error {
 
 	j, err := json.Marshal(definitions)
 	if err != nil {
@@ -104,9 +102,9 @@ func save(definitions *ind.IndicatorDefinitions, outfile string) error {
 	return nil
 }
 
-func createPatternNode(patternType string, value string, value2 string, match string) *ind.IndicatorNode {
+func createPatternNode(patternType string, value string, value2 string, match string) *IndicatorNode {
 
-	pattern := &ind.Pattern{Type: patternType, Value: value}
+	pattern := &Pattern{Type: patternType, Value: value}
 
 	if value2 != "" {
 		pattern.Value2 = value2
@@ -116,7 +114,7 @@ func createPatternNode(patternType string, value string, value2 string, match st
 		pattern.Match = match
 	}
 
-	node := &ind.IndicatorNode{Pattern: pattern}
+	node := &IndicatorNode{Pattern: pattern}
 
 	return node
 }

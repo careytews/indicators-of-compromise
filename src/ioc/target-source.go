@@ -10,8 +10,6 @@ import (
 	"regexp"
 
 	"github.com/google/uuid"
-	dt "github.com/tnw-open-source/analytics-common/datatypes"
-	ind "github.com/tnw-open-source/indicators"
 )
 
 const name = "TargetedThreats"
@@ -29,12 +27,12 @@ type TargetedThreat struct {
 
 var data struct {
 	threats     []*TargetedThreat
-	definitions []*ind.IndicatorNode
+	definitions []*IndicatorNode
 }
 
 func initialise() error {
 
-	data.definitions = make([]*ind.IndicatorNode, 0)
+	data.definitions = make([]*IndicatorNode, 0)
 
 	return nil
 }
@@ -98,7 +96,7 @@ func postProcess() error {
 		addIndicator(threat)
 	}
 
-	collection := &ind.IndicatorDefinitions{
+	collection := &IndicatorDefinitions{
 		Description: "Botherder Targeted Threats",
 		Version:     "3",
 		Definitions: data.definitions}
@@ -127,10 +125,10 @@ func addIndicator(threat *TargetedThreat) {
 func addIPNode(threat *TargetedThreat) {
 
 	// Create top level node
-	definition := &ind.IndicatorNode{Operator: "OR"}
+	definition := &IndicatorNode{Operator: "OR"}
 
 	// Create Indicator
-	definition.Indicator = &dt.Indicator{
+	definition.Indicator = &Indicator{
 		Id:          uuid.New().String(),
 		Type:        "ipv4",
 		Value:       threat.Address,
@@ -149,10 +147,10 @@ func addIPNode(threat *TargetedThreat) {
 func addHostnameNode(threat *TargetedThreat) {
 
 	// Create the top level node
-	definition := &ind.IndicatorNode{}
+	definition := &IndicatorNode{}
 
 	// Create indicator
-	definition.Indicator = &dt.Indicator{
+	definition.Indicator = &Indicator{
 		Id:          uuid.New().String(),
 		Type:        "hostname",
 		Value:       threat.Address,
@@ -161,7 +159,7 @@ func addHostnameNode(threat *TargetedThreat) {
 		Author:      "botherder@github",
 		Source:      threat.Reference}
 
-	definition.Pattern = &ind.Pattern{
+	definition.Pattern = &Pattern{
 		Type:  "hostname",
 		Value: threat.Address,
 		Match: "dns"}

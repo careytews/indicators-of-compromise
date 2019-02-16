@@ -7,9 +7,6 @@ import (
 	"io"
 	"io/ioutil"
 	"strings"
-
-	dt "github.com/tnw-open-source/analytics-common/datatypes"
-	ind "github.com/tnw-open-source/indicators"
 )
 
 const name = "Tor"
@@ -35,8 +32,8 @@ type TorNode struct {
 
 var data struct {
 	nodes            map[string]*TorNode
-	entryDefinitions []*ind.IndicatorNode
-	exitDefinitions  []*ind.IndicatorNode
+	entryDefinitions []*IndicatorNode
+	exitDefinitions  []*IndicatorNode
 }
 
 func initialise() error {
@@ -47,8 +44,8 @@ func initialise() error {
 	}
 
 	data.nodes = make(map[string]*TorNode, 0)
-	data.entryDefinitions = make([]*ind.IndicatorNode, 0)
-	data.exitDefinitions = make([]*ind.IndicatorNode, 0)
+	data.entryDefinitions = make([]*IndicatorNode, 0)
+	data.exitDefinitions = make([]*IndicatorNode, 0)
 
 	return nil
 }
@@ -137,12 +134,12 @@ func postProcess() error {
 		}
 	}
 
-	collection := &ind.IndicatorDefinitions{
+	collection := &IndicatorDefinitions{
 		Description: "Tor nodes",
 		Version:     "3"}
 
-	entryNodes := &ind.IndicatorNode{Operator: "OR"}
-	entryNodes.Indicator = &dt.Indicator{
+	entryNodes := &IndicatorNode{Operator: "OR"}
+	entryNodes.Indicator = &Indicator{
 		Id:          "TorEntryNodes-133c7a77-81dd-4d05-babb-fb2e9344d9cc",
 		Description: "TOR entry node",
 		Category:    entryCategory,
@@ -152,8 +149,8 @@ func postProcess() error {
 
 	collection.Definitions = append(collection.Definitions, entryNodes)
 
-	exitNodes := &ind.IndicatorNode{Operator: "OR"}
-	exitNodes.Indicator = &dt.Indicator{
+	exitNodes := &IndicatorNode{Operator: "OR"}
+	exitNodes.Indicator = &Indicator{
 		Id:          "TorExitNodes-133c7a77-81dd-4d05-babb-fb2e9344d9cc",
 		Description: "TOR exit node",
 		Category:    exitCategory,
@@ -176,7 +173,7 @@ func addEntryNode(tor *TorNode) {
 	id := fmt.Sprintf("TorEntryNode-%s", tor.ID)
 
 	// Create top level node
-	definition := &ind.IndicatorNode{Operator: "OR"}
+	definition := &IndicatorNode{Operator: "OR"}
 
 	if tor.Exit {
 		definition.ID = id
@@ -190,10 +187,10 @@ func addEntryNode(tor *TorNode) {
 	}
 
 	// Create the definition's children
-	srcChild := &ind.IndicatorNode{Operator: "AND"}
+	srcChild := &IndicatorNode{Operator: "AND"}
 	srcChild.Children = append(srcChild.Children, createPatternNode(srcType, tor.IP, "", ""))
 	if len(tor.Ports) > 1 {
-		orChild := &ind.IndicatorNode{Operator: "OR"}
+		orChild := &IndicatorNode{Operator: "OR"}
 		for _, child := range tor.Ports {
 			orChild.Children = append(orChild.Children, createPatternNode("src.tcp", child, "", "int"))
 		}
@@ -202,10 +199,10 @@ func addEntryNode(tor *TorNode) {
 		srcChild.Children = append(srcChild.Children, createPatternNode("src.tcp", tor.Ports[0], "", "int"))
 	}
 
-	destChild := &ind.IndicatorNode{Operator: "AND"}
+	destChild := &IndicatorNode{Operator: "AND"}
 	destChild.Children = append(destChild.Children, createPatternNode(destType, tor.IP, "", ""))
 	if len(tor.Ports) > 1 {
-		orChild := &ind.IndicatorNode{Operator: "OR"}
+		orChild := &IndicatorNode{Operator: "OR"}
 		for _, child := range tor.Ports {
 			orChild.Children = append(orChild.Children, createPatternNode("dest.tcp", child, "", "int"))
 		}
@@ -226,7 +223,7 @@ func addExitNode(tor *TorNode) {
 	entryID := fmt.Sprintf("TorEntryNode-%s", tor.ID)
 
 	// Create the top level node
-	definition := &ind.IndicatorNode{Operator: "AND"}
+	definition := &IndicatorNode{Operator: "AND"}
 
 	srcType := "src.ipv4"
 	destType := "dest.ipv4"
@@ -236,21 +233,21 @@ func addExitNode(tor *TorNode) {
 	}
 
 	// Create the definition's children
-	orChild := &ind.IndicatorNode{Operator: "OR"}
+	orChild := &IndicatorNode{Operator: "OR"}
 
-	srcChild := &ind.IndicatorNode{Operator: "AND"}
+	srcChild := &IndicatorNode{Operator: "AND"}
 	srcChild.Children = append(srcChild.Children, createPatternNode(srcType, tor.IP, "", ""))
-	srcChild.Children = append(srcChild.Children, &ind.IndicatorNode{Ref: srcExitPortRange})
+	srcChild.Children = append(srcChild.Children, &IndicatorNode{Ref: srcExitPortRange})
 
-	destChild := &ind.IndicatorNode{Operator: "AND"}
+	destChild := &IndicatorNode{Operator: "AND"}
 	destChild.Children = append(destChild.Children, createPatternNode(destType, tor.IP, "", ""))
-	destChild.Children = append(destChild.Children, &ind.IndicatorNode{Ref: destExitPortRange})
+	destChild.Children = append(destChild.Children, &IndicatorNode{Ref: destExitPortRange})
 
 	orChild.Children = append(orChild.Children, srcChild)
 	orChild.Children = append(orChild.Children, destChild)
 
-	notChild := &ind.IndicatorNode{Operator: "NOT"}
-	notChild.Children = append(notChild.Children, &ind.IndicatorNode{Ref: entryID})
+	notChild := &IndicatorNode{Operator: "NOT"}
+	notChild.Children = append(notChild.Children, &IndicatorNode{Ref: entryID})
 
 	// Append the definition's children
 	definition.Children = append(definition.Children, orChild)

@@ -6,9 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
-
-	dt "github.com/tnw-open-source/analytics-common/datatypes"
-	ind "github.com/tnw-open-source/indicators"
 )
 
 var categories = []string{
@@ -27,7 +24,7 @@ const url = "http://www.shallalist.de/"
 const email = "info@shallalist.de"
 
 var data struct {
-	definitions map[string][]*ind.IndicatorNode
+	definitions map[string][]*IndicatorNode
 }
 
 func initialise() error {
@@ -37,7 +34,7 @@ func initialise() error {
 		return err
 	}
 
-	data.definitions = make(map[string][]*ind.IndicatorNode, 0)
+	data.definitions = make(map[string][]*IndicatorNode, 0)
 
 	return nil
 }
@@ -127,12 +124,12 @@ func addIndicator(category string, file string, line string) {
 func postProcess() error {
 
 	for _, category := range categories {
-		collection := &ind.IndicatorDefinitions{
+		collection := &IndicatorDefinitions{
 			Description: name + " " + category,
 			Version:     "3"}
 
-		orList := &ind.IndicatorNode{Operator: "OR"}
-		orList.Indicator = &dt.Indicator{
+		orList := &IndicatorNode{Operator: "OR"}
+		orList.Indicator = &Indicator{
 			Id:          name + "-" + category + "-67599039-b461-4312-96dd-d01e2bcfc380",
 			Description: name + " " + category,
 			Category:    category,

@@ -7,8 +7,6 @@ import (
 	"strings"
 
 	flags "github.com/jessevdk/go-flags"
-	dt "github.com/tnw-open-source/analytics-common/datatypes"
-	ind "github.com/tnw-open-source/indicators"
 )
 
 var options struct {
@@ -17,7 +15,7 @@ var options struct {
 }
 
 var work struct {
-	indicators *dt.Indicators
+	indicators *Indicators
 }
 
 func openDefinitions() {
@@ -28,7 +26,7 @@ func openDefinitions() {
 		return
 	}
 
-	var ind dt.Indicators
+	var ind Indicators
 	err = json.Unmarshal(data, &ind)
 	if err != nil {
 		println(err.Error())
@@ -49,15 +47,15 @@ func TranslateIndicators() {
 
 	openDefinitions()
 
-	indicators := make([]*ind.IndicatorNode, 0)
+	indicators := make([]*IndicatorNode, 0)
 
 	for _, i := range work.indicators.Indicators {
 
 		if i != nil {
-			pattern := &ind.TypeValuePair{
+			pattern := &TypeValuePair{
 				Type:  i.Type,
 				Value: i.Value}
-			node := &ind.IndicatorNode{
+			node := &IndicatorNode{
 				ID:        i.Id,
 				Indicator: i,
 				Pattern:   pattern}
@@ -66,7 +64,7 @@ func TranslateIndicators() {
 		}
 	}
 
-	collection := ind.IndicatorDefinitions{
+	collection := IndicatorDefinitions{
 		Description: "Trust Networks Indicators",
 		Version:     "3",
 		Definitions: indicators}
