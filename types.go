@@ -1,5 +1,9 @@
 package main
 
+import (
+	"time"
+)
+
 // Indicator that is used in alerts, pipelines, etc.
 type Indicator struct {
 	Id          string `json:"id,omitempty"`
@@ -13,7 +17,6 @@ type Indicator struct {
 	// An indicator would never have probability 0.0, so zero means not
 	// specified.
 	Probability float32 `json:"probability,omitempty"`
-
 }
 
 // Indicators is a collection of flat indicators. This is now
@@ -48,12 +51,20 @@ type IndicatorDefinition struct {
 	IOCDefinition *IOCDefinition `json:"ioc_definition" required:"true"`
 }
 
-// IndicatorDefinitions defines the file format of IOC definitions.
-// IOCs could be defined with multiple of such files.
-type IndicatorDefinitions struct {
-	Description string           `json:"description,omitempty"`
-	Version     string           `json:"version,omitempty"`
-	Definitions []*IndicatorNode `json:"definitions,omitempty"`
+// Pattern is the pattern to match on
+// The Type is the type of event property to match, e.g. "country"
+// Value is the value to match
+// Value2 is a second value to match, e.g. required for a range match
+// Match is the type of match to perform:
+//    - string (string match of Value, the default if Match is not specified)
+//    - int (an integer match of Value)
+//    - range (an integer range match of Value-Value2 inclusive)
+//    - dns (a DNS hostname match of Value)
+type Pattern struct {
+	Type   string `json:"type,omitempty"`
+	Value  string `json:"value,omitempty"`
+	Value2 string `json:"value2,omitempty"`
+	Match  string `json:"match,omitempty"`
 }
 
 // IndicatorNode is a node in a boolean tree.
@@ -69,24 +80,17 @@ type IndicatorNode struct {
 	Comment     string           `json:"comment,omitempty"`
 	Ref         string           `json:"ref,omitempty"`
 	Operator    string           `json:"operator,omitempty"` // OR|AND|NOT
-	Indicator   *dt.Indicator    `json:"indicator,omitempty"`
+	Indicator   *Indicator       `json:"indicator,omitempty"`
 	Parents     []*IndicatorNode `json:"parents,omitempty"`
 	Children    []*IndicatorNode `json:"children,omitempty"`
 	SiblingNots []int            `json:"siblingnots,omitempty"`
 	Pattern     *Pattern         `json:"pattern,omitempty"`
+}
 
-// Pattern is the pattern to match on
-// The Type is the type of event property to match, e.g. "country"
-// Value is the value to match
-// Value2 is a second value to match, e.g. required for a range match
-// Match is the type of match to perform:
-//    - string (string match of Value, the default if Match is not specified)
-//    - int (an integer match of Value)
-//    - range (an integer range match of Value-Value2 inclusive)
-//    - dns (a DNS hostname match of Value)
-type Pattern struct {
-	Type   string `json:"type,omitempty"`
-	Value  string `json:"value,omitempty"`
-	Value2 string `json:"value2,omitempty"`
-	Match  string `json:"match,omitempty"`
+// IndicatorDefinitions defines the file format of IOC definitions.
+// IOCs could be defined with multiple of such files.
+type IndicatorDefinitions struct {
+	Description string           `json:"description,omitempty"`
+	Version     string           `json:"version,omitempty"`
+	Definitions []*IndicatorNode `json:"definitions,omitempty"`
 }
